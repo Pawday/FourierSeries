@@ -3,23 +3,44 @@ package org.kondle.fourierSeries.main;
 import org.kondle.fourierSeries.math.FourierSeries;
 import org.kondle.fourierSeries.math.Function;
 import org.kondle.fourierSeries.math.PointFunction;
+import org.kondle.fourierSeries.math.SeriesFunction;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Main
 {
+
+    static private Dimension size = new Dimension(0,0);
+
     public static void main(String[] args)
     {
+
+        // pathFile framesCount scale [rotateCount]
 
         //TODO: check validation of args and alert about wrong parts
 
         File pathFile = new File(args[0]);
         int framesCount = Integer.parseInt(args[1]);
+        int rotateCount = 1;
+        int scale = 1;
 
-        Dimension resolution = new Dimension(Integer.parseInt(args[2].split("x")[0]),Integer.parseInt(args[2].split("x")[1]));
+
+        if (args.length == 3)
+        {
+            scale = Integer.parseInt(args[2]);
+        }
+
+
+        if (args.length == 4)
+        {
+            rotateCount = Integer.parseInt(args[3]);
+        }
 
         File imgDir = new File("imgs");
         if (!imgDir.exists()) imgDir.mkdir();
@@ -52,11 +73,52 @@ public class Main
             }
         }
 
+        for (int i = 0; i < points.length; i++)
+        {
+            if (points[i][0] > size.width)
+                size.width = (int) Math.ceil(points[i][0]);
+            if (points[i][1] > size.height)
+                size.height = (int) Math.ceil(points[i][1]);
+        }
+
         Function pointF = new PointFunction(points);
-
-
         FourierSeries series = new FourierSeries(pointF);
-        series.setCoeffCount(3);
+        series.setCoeffCount(10);
+
+        SeriesFunction seriesFunction = new SeriesFunction(series.calculateCoefficients());
+
+        BufferedImage image;
+
+
+
+        for (int i = 0; i <= framesCount; i++)
+        {
+            image = new BufferedImage(size.width * scale,size.height * scale,BufferedImage.TYPE_INT_ARGB);
+            Graphics g = image.getGraphics();
+            g.setColor(Color.WHITE);
+            for (int i2 = i; i2 > 0; i2--)
+            {
+                // TODO: implement color tail
+                double[] pPoint = seriesFunction.getPoint((double) (i2 - 1) * rotateCount / framesCount);
+                double[] point = seriesFunction.getPoint((double) i2 * rotateCount / framesCount);
+                g.drawLine(
+                        (int) (point[0] * 0.99 * scale),
+                        (int) (point[1] * 0.99 * scale),
+                        (int) (pPoint[0] * 0.99 * scale),
+                        (int) (pPoint[1] * 0.99 * scale));
+
+            }
+
+            System.out.println(i);
+
+            try
+            {
+                ImageIO.write(image,"png",new File("imgs/img" + i + ".png"));
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
 
 
 
