@@ -1,6 +1,8 @@
 package org.kondle.fourierSeries.main;
 
+import org.kondle.fourierSeries.math.FourierSeries;
 import org.kondle.fourierSeries.math.Function;
+import org.kondle.fourierSeries.math.PointFunction;
 
 import java.awt.*;
 import java.io.File;
@@ -50,8 +52,11 @@ public class Main
             }
         }
 
-        Function f = new Function(points);
+        Function pointF = new PointFunction(points);
 
+
+        FourierSeries series = new FourierSeries(pointF);
+        series.setCoeffCount(3);
 
 
 
