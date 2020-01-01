@@ -24,22 +24,13 @@ public class Main
 
         //TODO: check validation of args and alert about wrong parts
 
-        File pathFile = new File(args[0]);
-        int framesCount = Integer.parseInt(args[1]);
-        int rotateCount = 1;
-        int scale = 1;
+        Params params = new Params(args);
 
 
-        if (args.length == 3)
-        {
-            scale = Integer.parseInt(args[2]);
-        }
+        System.out.println(params);
 
 
-        if (args.length == 4)
-        {
-            rotateCount = Integer.parseInt(args[3]);
-        }
+
 
         File imgDir = new File("imgs");
         if (!imgDir.exists()) imgDir.mkdir();
@@ -48,7 +39,7 @@ public class Main
 
         {
             StringBuilder pathStr = new StringBuilder();
-            try (FileInputStream pathFileIS = new FileInputStream(pathFile))
+            try (FileInputStream pathFileIS = new FileInputStream(params.pathFile))
             {
                 int b;
                 while ((b = pathFileIS.read()) != -1)
@@ -82,7 +73,7 @@ public class Main
 
         Function pointF = new PointFunction(points);
         FourierSeries series = new FourierSeries(pointF);
-        series.setCoeffCount(10);
+        series.setCoeffCount(params.coefficientsCount);
 
         SeriesFunction seriesFunction = new SeriesFunction(series.calculateCoefficients());
 
@@ -90,23 +81,23 @@ public class Main
 
 
 
-        for (int i = 0; i <= framesCount; i++)
+        for (int i = 0; i <= params.framesCount; i++)
         {
-            image = new BufferedImage(size.width * scale,size.height * scale,BufferedImage.TYPE_INT_ARGB);
+            image = new BufferedImage(size.width * params.scale,size.height * params.scale,BufferedImage.TYPE_INT_ARGB);
             Graphics g = image.getGraphics();
             Color color;
             for (int i2 = i; i2 > 0; i2--)
             {
                 color = new Color(255,255,255, 255 / i * i2);
                 g.setColor(color);
-                double[] pPoint = seriesFunction.getPoint((double) (i2 - 1) * rotateCount / framesCount);
-                double[] point = seriesFunction.getPoint((double) i2 * rotateCount / framesCount);
+                double[] pPoint = seriesFunction.getPoint((double) (i2 - 1) * params.rotateCount / params.framesCount);
+                double[] point = seriesFunction.getPoint((double) i2 * params.rotateCount / params.framesCount);
                 g.drawLine
                 (
-                        (int) (point[0] * 0.99 * scale),
-                        (int) (point[1] * 0.99 * scale),
-                        (int) (pPoint[0] * 0.99 * scale),
-                        (int) (pPoint[1] * 0.99 * scale)
+                        (int) (point[0] * 0.99 * params.scale),
+                        (int) (point[1] * 0.99 * params.scale),
+                        (int) (pPoint[0] * 0.99 * params.scale),
+                        (int) (pPoint[1] * 0.99 * params.scale)
                 );
 
             }
