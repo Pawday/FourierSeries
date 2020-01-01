@@ -16,7 +16,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.kondle.fourierSeries.main.Main</mainClass>
+                            <mainClass>main.java.org.kondle.fourierSeries.main.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
