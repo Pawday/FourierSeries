@@ -8,7 +8,6 @@ import org.kondle.fourierSeries.math.SeriesFunction;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -95,22 +94,23 @@ public class Main
         {
             image = new BufferedImage(size.width * scale,size.height * scale,BufferedImage.TYPE_INT_ARGB);
             Graphics g = image.getGraphics();
-            g.setColor(Color.WHITE);
+            Color color;
             for (int i2 = i; i2 > 0; i2--)
             {
-                // TODO: implement color tail
+                color = new Color(255,255,255, 255 / i * i2);
+                g.setColor(color);
                 double[] pPoint = seriesFunction.getPoint((double) (i2 - 1) * rotateCount / framesCount);
                 double[] point = seriesFunction.getPoint((double) i2 * rotateCount / framesCount);
-                g.drawLine(
+                g.drawLine
+                (
                         (int) (point[0] * 0.99 * scale),
                         (int) (point[1] * 0.99 * scale),
                         (int) (pPoint[0] * 0.99 * scale),
-                        (int) (pPoint[1] * 0.99 * scale));
+                        (int) (pPoint[1] * 0.99 * scale)
+                );
 
             }
-
             System.out.println(i);
-
             try
             {
                 ImageIO.write(image,"png",new File("imgs/img" + i + ".png"));
