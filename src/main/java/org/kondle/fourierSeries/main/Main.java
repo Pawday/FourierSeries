@@ -79,27 +79,53 @@ public class Main
 
         BufferedImage image;
 
+        Stroke shapeStroke = new BasicStroke(2 * params.scale);
 
+
+        int framesPerCircle = params.framesCount / params.rotateCount;
 
         for (int i = 0; i <= params.framesCount; i++)
         {
             image = new BufferedImage(size.width * params.scale,size.height * params.scale,BufferedImage.TYPE_INT_ARGB);
-            Graphics g = image.getGraphics();
+            Graphics2D g = (Graphics2D) image.getGraphics();
             Color color;
-            for (int i2 = i; i2 > 0; i2--)
-            {
-                color = new Color(255,255,255, 255 / i * i2);
-                g.setColor(color);
-                double[] pPoint = seriesFunction.getPoint((double) (i2 - 1) * params.rotateCount / params.framesCount);
-                double[] point = seriesFunction.getPoint((double) i2 * params.rotateCount / params.framesCount);
-                g.drawLine
-                (
-                        (int) (point[0] * 0.99 * params.scale),
-                        (int) (point[1] * 0.99 * params.scale),
-                        (int) (pPoint[0] * 0.99 * params.scale),
-                        (int) (pPoint[1] * 0.99 * params.scale)
-                );
 
+            // draw path
+            if (!params.hidePath)
+            {
+                g.setStroke(shapeStroke);
+                int cond;
+
+                if (i / (params.framesCount / params.rotateCount) == 0)
+                {
+                    cond = 0;
+                }
+                else
+                {
+                    cond = (i - framesPerCircle);
+                }
+                for (int i2 = i; i2 > cond; i2--)
+                {
+                    if (i / (params.framesCount / params.rotateCount) == 0)
+                    {
+                        color = new Color(255,255,255, (int) (255 * (i2 / (double)i)));
+                    }
+                    else
+                    {
+                        color = new Color(255,255,255, (int) (255 * ((i2 - (i - framesPerCircle)) / (double) framesPerCircle)));
+                    }
+
+                    g.setColor(color);
+                    double[] pPoint = seriesFunction.getPoint((double) (i2 - 1) * params.rotateCount / params.framesCount);
+                    double[] point = seriesFunction.getPoint((double) i2 * params.rotateCount / params.framesCount);
+                    g.drawLine
+                            (
+                                    (int) (point[0] * 0.98 * params.scale),
+                                    (int) (point[1] * 0.98 * params.scale),
+                                    (int) (pPoint[0] * 0.98 * params.scale),
+                                    (int) (pPoint[1] * 0.98 * params.scale)
+                            );
+                }
             }
             System.out.println(i);
             try

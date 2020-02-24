@@ -8,6 +8,11 @@ public class Params
     public int rotateCount = 1;
     public int coefficientsCount = 10;
 
+    public boolean hideCircles = false;
+    public boolean hideArrows = false;
+    public boolean hidePath = false;
+
+
 
 
     public Params(String[] args)
@@ -30,6 +35,16 @@ public class Params
                 break;
                 case "-c":
                     this.coefficientsCount = Integer.parseInt(args[i * 2 + 1]);
+                break;
+                case "-h":
+                    String[] hideObjects = args[i * 2 + 1].split(",");
+
+                    for (int b = 0; b < hideObjects.length; b++)
+                    {
+                        if (hideObjects[b].equals("arrows")) {this.hideArrows = true; continue;}
+                        if (hideObjects[b].equals("circles")) {this.hideCircles = true; continue;}
+                        if (hideObjects[b].equals("path")) {this.hidePath = true;}
+                    }
                 break;
             }
         }
