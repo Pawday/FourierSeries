@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Main
 {
@@ -71,20 +72,26 @@ public class Main
                 size.height = (int) Math.ceil(points[i][1]);
         }
 
+        size.height += params.additionalSides * 2;
+        size.width += params.additionalSides * 2;
+
         Function pointF = new PointFunction(points);
         FourierSeries series = new FourierSeries(pointF);
         series.setCoeffCount(params.coefficientsCount);
 
-        SeriesFunction seriesFunction = new SeriesFunction(series.calculateCoefficients());
+        double[][] coeffs = series.calculateCoefficients();
+
+        SeriesFunction seriesFunction = new SeriesFunction(coeffs);
 
         BufferedImage image;
 
         Stroke shapeStroke = new BasicStroke(2 * params.scale);
+        Stroke arrowStroke = new BasicStroke(params.scale);
 
 
         int framesPerCircle = params.framesCount / params.rotateCount;
 
-        for (int i = 0; i <= params.framesCount; i++)
+        for (int imgNum = 0; imgNum <= params.framesCount; imgNum++)
         {
             image = new BufferedImage(size.width * params.scale,size.height * params.scale,BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = (Graphics2D) image.getGraphics();
@@ -96,23 +103,23 @@ public class Main
                 g.setStroke(shapeStroke);
                 int cond;
 
-                if (i / (params.framesCount / params.rotateCount) == 0)
+                if (imgNum / (params.framesCount / params.rotateCount) == 0)
                 {
                     cond = 0;
                 }
                 else
                 {
-                    cond = (i - framesPerCircle);
+                    cond = (imgNum - framesPerCircle);
                 }
-                for (int i2 = i; i2 > cond; i2--)
+                for (int i2 = imgNum; i2 > cond; i2--)
                 {
-                    if (i / (params.framesCount / params.rotateCount) == 0)
+                    if (imgNum / (params.framesCount / params.rotateCount) == 0)
                     {
-                        color = new Color(255,255,255, (int) (255 * (i2 / (double)i)));
+                        color = new Color(255,255,255, (int) (255 * (i2 / (double)imgNum)));
                     }
                     else
                     {
-                        color = new Color(255,255,255, (int) (255 * ((i2 - (i - framesPerCircle)) / (double) framesPerCircle)));
+                        color = new Color(255,255,255, (int) (255 * ((i2 - (imgNum - framesPerCircle)) / (double) framesPerCircle)));
                     }
 
                     g.setColor(color);
@@ -120,24 +127,46 @@ public class Main
                     double[] point = seriesFunction.getPoint((double) i2 * params.rotateCount / params.framesCount);
                     g.drawLine
                             (
-                                    (int) (point[0] * 0.98 * params.scale),
-                                    (int) (point[1] * 0.98 * params.scale),
-                                    (int) (pPoint[0] * 0.98 * params.scale),
-                                    (int) (pPoint[1] * 0.98 * params.scale)
+                                    (int) ((point[0] + params.additionalSides) * 0.98 * params.scale),
+                                    (int) (((size.height - params.additionalSides) - point[1]) * 0.98 * params.scale),
+                                    (int) ((pPoint[0] + params.additionalSides) * 0.98 * params.scale),
+                                    (int) (((size.height - params.additionalSides) - pPoint[1]) * 0.98 * params.scale)
                             );
                 }
             }
-            System.out.println(i);
+
+
+            //draw arrows
+            if (!params.hideArrows)
+            {
+                g.setColor(Color.YELLOW);
+                double[] lastPoint = new double[0];
+
+                for (int i2 = 0; i2 < coeffs.length; i2++)
+                {
+                    g.setStroke(arrowStroke);
+                    double[] newPoint = seriesFunction.getPointOrdered((imgNum * params.rotateCount) / (double) params.framesCount,i2);
+                    if (i2 == 0 || i2 == 1) {lastPoint = newPoint; continue;}
+                    g.drawLine
+                    (
+                            (int) ((lastPoint[0] + params.additionalSides) * 0.98 * params.scale),
+                            (int) (((size.height - params.additionalSides) - lastPoint[1]) * 0.98 * params.scale),
+                            (int) ((newPoint[0] + params.additionalSides) * 0.98 * params.scale),
+                            (int) (((size.height - params.additionalSides) - newPoint[1]) * 0.98 * params.scale)
+                    );
+                    lastPoint = newPoint;
+                }
+            }
+
+
+            System.out.println(imgNum);
             try
             {
-                ImageIO.write(image,"png",new File("imgs/img" + i + ".png"));
+                ImageIO.write(image,"png",new File("imgs/img" + imgNum + ".png"));
             } catch (IOException e)
             {
                 e.printStackTrace();
             }
         }
-
-
-
     }
 }

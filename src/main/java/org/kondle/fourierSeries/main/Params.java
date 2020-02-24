@@ -11,6 +11,7 @@ public class Params
     public boolean hideCircles = false;
     public boolean hideArrows = false;
     public boolean hidePath = false;
+    public int additionalSides = 0;
 
 
 
@@ -45,6 +46,9 @@ public class Params
                         if (hideObjects[b].equals("circles")) {this.hideCircles = true; continue;}
                         if (hideObjects[b].equals("path")) {this.hidePath = true;}
                     }
+                break;
+                case "-a":
+                    this.additionalSides = Integer.parseInt(args[i * 2 + 1]);
                 break;
             }
         }

@@ -1,5 +1,7 @@
 package org.kondle.fourierSeries.math;
 
+import java.util.Arrays;
+
 public class PointFunction implements Function
 {
     private double[][] points;
@@ -11,17 +13,13 @@ public class PointFunction implements Function
 
     public double[] getPoint(double time)
     {
-        double[] retPoint = new double[2];
-
-        double[] prPoint = this.points[(int) Math.ceil(time * (this.points.length - 1)) - 1];
-        double[] nextPoint = this.points[(int) Math.ceil(time * (this.points.length - 1))];
-
-        double middlePointPos = (time * points.length) - Math.floor(time * points.length);
-
-        retPoint[0] = (nextPoint[0] - prPoint[0]) * middlePointPos + prPoint[0];
-        retPoint[1] = (nextPoint[1] - prPoint[1]) * middlePointPos + prPoint[1];
-
-        return retPoint;
+        double dIndex = time * (this.points.length - 1);
+        int pPointIndex = (int) Math.floor(dIndex);
+        double[] prevPoint = this.points[pPointIndex];
+        double[] nextPoint = this.points[(int) Math.ceil(dIndex)];
+        double diff = dIndex - pPointIndex;
+        double[] cordDiffs = {nextPoint[0] - prevPoint[0],nextPoint[1] - prevPoint[1]};
+        return new double[]{prevPoint[0] + cordDiffs[0] * diff,prevPoint[1] + cordDiffs[1] * diff};
     }
 }
 

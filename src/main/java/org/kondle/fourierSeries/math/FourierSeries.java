@@ -34,13 +34,13 @@ public class FourierSeries
             for (int igr = 1; igr <= integrateLimit; igr++)
             {
                 coffs[i][0] += f.getPoint(igr / (double) integrateLimit)[0] *
-                        Math.sin(2 * Math.PI * -(i - coeffCount) * igr / (double) integrateLimit) / integrateLimit;
+                        Math.sin(2 * Math.PI * (i - coeffCount) * igr / (double) integrateLimit) / integrateLimit;
                 coffs[i][1] += f.getPoint(igr / (double) integrateLimit)[0] *
-                        Math.cos(2 * Math.PI * -(i - coeffCount) * igr / (double) integrateLimit) / integrateLimit;
+                        Math.cos(2 * Math.PI * (i - coeffCount) * igr / (double) integrateLimit) / integrateLimit;
                 coffs[i][2] += f.getPoint(igr / (double) integrateLimit)[1] *
-                        Math.sin(2 * Math.PI * -(i - coeffCount) * igr / (double) integrateLimit) / integrateLimit;
+                        Math.sin(2 * Math.PI * (i - coeffCount) * igr / (double) integrateLimit) / integrateLimit;
                 coffs[i][3] += f.getPoint(igr / (double) integrateLimit)[1] *
-                        Math.cos(2 * Math.PI * -(i - coeffCount) * igr / (double) integrateLimit) / integrateLimit;
+                        Math.cos(2 * Math.PI * (i - coeffCount) * igr / (double) integrateLimit) / integrateLimit;
             }
         }
         return coffs;
