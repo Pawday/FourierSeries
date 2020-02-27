@@ -28,7 +28,6 @@ public class Main
         Params params = new Params(args);
 
 
-        System.out.println(params);
 
 
 
@@ -85,8 +84,8 @@ public class Main
 
         BufferedImage image;
 
-        Stroke shapeStroke = new BasicStroke(2 * params.scale);
-        Stroke arrowStroke = new BasicStroke(params.scale);
+        Stroke shapeStroke = new BasicStroke(params.scale);
+        Stroke arrowStroke = new BasicStroke(params.scale / (float)2);
 
 
         int framesPerCircle = params.framesCount / params.rotateCount;
@@ -159,11 +158,20 @@ public class Main
             }
 
 
-            System.out.println(imgNum);
             try
             {
-                ImageIO.write(image,"png",new File("imgs/img" + imgNum + ".png"));
-            } catch (IOException e)
+                if (params.doStreamOutput)
+                {
+                    ImageIO.write(image, "png", System.out);
+                }
+                else
+                {
+                    System.out.println(imgNum);
+
+                    ImageIO.write(image, "png", new File("imgs/img" + imgNum + ".png"));
+                }
+            }
+            catch (IOException e)
             {
                 e.printStackTrace();
             }

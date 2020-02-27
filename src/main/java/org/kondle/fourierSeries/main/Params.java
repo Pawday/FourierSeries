@@ -12,6 +12,7 @@ public class Params
     public boolean hideArrows = false;
     public boolean hidePath = false;
     public int additionalSides = 0;
+    public boolean doStreamOutput = false;
 
 
 
@@ -49,6 +50,10 @@ public class Params
                 break;
                 case "-a":
                     this.additionalSides = Integer.parseInt(args[i * 2 + 1]);
+                break;
+                case "-o":
+                    if (args[i * 2 + 1].equals("stream"))
+                        this.doStreamOutput = true;
                 break;
             }
         }
